@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+const process = require('process')
+const path = require('path')
+const { program } = require('commander')
+const simpleGit = require('simple-git/promise');
+const git = simpleGit()
+
+// git checkout
+// git checkout -b
+program
+  .command('checkout [localbranch]')
+  .option('-b, --branch <newBranch>')
+  .action(async (localbranch, options) => {
+    const { branch: newBranch } = options
+    const status = await git.status()
+    const { current: currentBranch } = status
+    if (localbranch) {
+      try {
+        await git.checkout(localbranch)
+        await git.raw([
+          'submodule',
+          'foreach',
+          'git',
+          'checkout',
+          localbranch
+        ])
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (newBranch) {
+      try {
+        await git.checkoutBranch(newBranch, currentBranch)
+        await git.raw([
+          'submodule',
+          'foreach',
+          'git',
+          'checkout',
+          '-b',
+          newBranch
+        ])
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  })
+
+program
+  .command('pull')
+  .action(async () => {
+    try {
+      await git.pull()
+      await git.raw([
+        'submodule',
+        'foreach',
+        'git',
+        'pull',
+      ])
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+program.parse(process.argv);
