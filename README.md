@@ -1,12 +1,12 @@
 # git-submodule-management
 
-## Descriptions
-
 A fast git submodule management cli.
 
 ## Installation
 
+```
 npm install git-submodule-management
+```
 
 ## Usage
 
