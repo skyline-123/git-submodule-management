@@ -5,7 +5,7 @@ A fast git submodule management cli.
 ## Installation
 
 ```
-npm install git-submodule-management
+npm install git-submodule-management -g
 ```
 
 ## Usage
