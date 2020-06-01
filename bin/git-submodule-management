@@ -5,35 +5,66 @@ const { program } = require('commander')
 const simpleGit = require('simple-git/promise');
 const git = simpleGit()
 
-// git checkout
-// git checkout -b
+const submoduleCommands = [
+  'submodule',
+  'foreach',
+  'git'
+]
+
 program
-  .command('checkout [localbranch]')
-  .option('-b, --branch <newBranch>')
-  .action(async (localbranch, options) => {
+  .command('ac <message>')
+  .action(async (message) => {
+    try {
+      await git.raw([
+        ...submoduleCommands,
+        'add',
+        '-A'
+      ])
+      await git.raw([
+        ...submoduleCommands,
+        'commit',
+        '-m',
+        message
+      ])
+      await git.raw([
+        'add',
+        '-A'
+      ])
+      await git.raw([
+        'commit',
+        '-m',
+        message
+      ])
+      console.log('Add and commit successfully!')
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+program
+  .command('checkout [localBranch]')
+  .option('-b, --branch <newBranch>', 'create and checkout a new branch')
+  .action(async (localBranch, options) => {
     const { branch: newBranch } = options
     const status = await git.status()
     const { current: currentBranch } = status
-    if (localbranch) {
+    if (localBranch) {
       try {
-        await git.checkout(localbranch)
+        await git.checkout(localBranch)
         await git.raw([
-          'submodule',
-          'foreach',
-          'git',
+          ...submoduleCommands,
           'checkout',
-          localbranch
+          localBranch
         ])
+        console.log('Checkout successfully!')
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     } else if (newBranch) {
       try {
         await git.checkoutBranch(newBranch, currentBranch)
         await git.raw([
-          'submodule',
-          'foreach',
-          'git',
+          ...submoduleCommands,
           'checkout',
           '-b',
           newBranch
@@ -50,14 +81,52 @@ program
     try {
       await git.pull()
       await git.raw([
-        'submodule',
-        'foreach',
-        'git',
+        ...submoduleCommands,
         'pull',
       ])
+      console.log('Pull successfully!')
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   })
+
+program
+  .command('push')
+  .action(async () => {
+    try {
+      const branchRegExp = /\(heads\/([^)]+?)\)/
+      const subModuleStatus = await git.subModule('status')
+      const subModuleBranch = subModuleStatus.match(branchRegExp)[1]
+      const { current: currentBranch } = await git.status()
+
+      let result = ''
+      await git.push('origin', currentBranch)
+      await git.raw([
+        ...submoduleCommands,
+        'push',
+        'origin',
+        subModuleBranch
+      ])
+      console.log('Push successfully!')
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+program
+  .command('clone <repo>')
+  .action(async repo => {
+    try {
+      const result = await git.raw([
+        'clone',
+        '--recurse-submodules',
+        repo,
+      ])
+      console.log(result)
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
 
 program.parse(process.argv);
