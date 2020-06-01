@@ -21,7 +21,7 @@ gsm clone <repo>
 ### Add and commit changes the default tracked repo and submodules
 
 ```bash
-gsm cm <message>
+gsm ac <message>
 ```
 
 ### Change branch of the default tracked repo and submodules
