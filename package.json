@@ -1,7 +1,13 @@
 {
   "name": "git-submodule-management",
   "version": "0.0.3",
-  "description": "",
+  "description": "A fast git submodule management cli.",
+  "keywords": [
+    "git",
+    "cli",
+    "node",
+    "submodule"
+  ],
   "main": "./bin/git-submodule-management",
   "bin": {
     "gsm": "./bin/git-submodule-management"
