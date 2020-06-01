@@ -11,6 +11,16 @@ const submoduleCommands = [
   'git'
 ]
 
+const getSubmoduleBranches = status => {
+  const branchRegExp = /On branch ([^\r\n\t\f]+)/g
+  const branches = []
+  let match
+  while (match = branchRegExp.exec(status)) {
+    branches.push(match[1])
+  }
+  return branches
+}
+
 program
   .command('ac <message>')
   .action(async (message) => {
@@ -37,7 +47,7 @@ program
       ])
       console.log('Add and commit successfully!')
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   })
 
@@ -62,6 +72,17 @@ program
       }
     } else if (newBranch) {
       try {
+        // TODO: confirm the name of submodule branch.
+        const subModuleStatus = await git.raw([
+          ...submoduleCommands,
+          'status'
+        ])
+        const subModuleBranches = getSubmoduleBranches(subModuleStatus)
+        const { current: currentBranch } = await git.status()
+        if (!subModuleBranches.every(item => item === currentBranch)) {
+          console.error('Please make sure that repo branch equels subModuleBranches')
+          return
+        }
         await git.checkoutBranch(newBranch, currentBranch)
         await git.raw([
           ...submoduleCommands,
@@ -70,7 +91,7 @@ program
           newBranch
         ])
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
   })
@@ -94,12 +115,18 @@ program
   .command('push')
   .action(async () => {
     try {
-      const branchRegExp = /\(heads\/([^)]+?)\)/
-      const subModuleStatus = await git.subModule('status')
-      const subModuleBranch = subModuleStatus.match(branchRegExp)[1]
+      const subModuleStatus = await git.raw([
+        ...submoduleCommands,
+        'status'
+      ])
+      const subModuleBranches = getSubmoduleBranches(subModuleStatus)
       const { current: currentBranch } = await git.status()
+      if (!subModuleBranches.every(item => item === currentBranch)) {
+        console.error('Please make sure that repo branch equels subModuleBranches')
+        return
+      }
 
-      let result = ''
+
       await git.push('origin', currentBranch)
       await git.raw([
         ...submoduleCommands,
