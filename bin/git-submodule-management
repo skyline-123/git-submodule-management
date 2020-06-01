@@ -72,7 +72,6 @@ program
       }
     } else if (newBranch) {
       try {
-        // TODO: confirm the name of submodule branch.
         const subModuleStatus = await git.raw([
           ...submoduleCommands,
           'status'
