@@ -18,7 +18,7 @@ Clone the repo and all submodules at one time.
 gsm clone <repo>
 ```
 
-### Add and commit changes the default tracked repo and submodules
+### Add and commit changes of the default tracked repo and submodules
 
 ```bash
 gsm ac <message>
