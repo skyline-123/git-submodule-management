@@ -1,6 +1,6 @@
 {
   "name": "git-submodule-management",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "./bin/git-submodule-management",
   "bin": {
