@@ -25,17 +25,25 @@ program
   .command('ac <message>')
   .action(async (message) => {
     try {
-      await git.raw([
-        ...submoduleCommands,
-        'add',
-        '-A'
-      ])
-      await git.raw([
-        ...submoduleCommands,
-        'commit',
-        '-m',
-        message
-      ])
+      try {
+        await git.raw([
+          ...submoduleCommands,
+          'add',
+          '-A'
+        ])
+      } catch (error) {
+        console.log(error)
+      }
+      try {
+        await git.raw([
+          ...submoduleCommands,
+          'commit',
+          '-m',
+          message
+        ])
+      } catch (error) {
+        console.log('submodules working tree clean')
+      }
       await git.raw([
         'add',
         '-A'
