@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const process = require('process')
-const path = require('path')
 const { program } = require('commander')
 const simpleGit = require('simple-git/promise');
 const git = simpleGit()
