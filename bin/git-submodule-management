@@ -3,8 +3,8 @@ const process = require('process')
 const path = require('path')
 const { program } = require('commander')
 const simpleGit = require('simple-git/promise');
-const packageJson = require('../package.json')
 const git = simpleGit()
+const { version } = require('../package.json')
 
 const submoduleCommands = [
   'submodule',
@@ -155,7 +155,7 @@ program
     }
   })
 
-program.version(packageJson.version)
+program.version(version)
 
 
 program.parse(process.argv);
