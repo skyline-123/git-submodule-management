@@ -139,7 +139,7 @@ program
         ...submoduleCommands,
         'push',
         'origin',
-        subModuleBranch
+        currentBranch
       ])
       console.log('Push successfully!')
     } catch (error) {
