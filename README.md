@@ -40,6 +40,12 @@ Synchronize the branches of the new main repo and all submodules. The default is
 gsm checkout -b <newBranch>
 ```
 
+### Merge branch to the default tracked repo and submodules
+
+```bash
+gsm merge <localBranch>
+```
+
 ### Pull all updates from the default tracked repo and submodules
 
 ```bash
