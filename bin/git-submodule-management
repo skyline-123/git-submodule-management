@@ -150,6 +150,22 @@ program
   })
 
 program
+  .command('merge <localBranch>')
+  .action(async (localBranch) => {
+    const { current: currentBranch } = await git.status()
+    await git.mergeFromTo(currentBranch, localBranch).catch(err => {
+      console.error('Please fix conflicts and then commit the result.')
+    })
+    await git.raw([
+      ...submoduleCommands,
+      'merge',
+      localBranch
+    ]).catch(err => {
+      console.error('Please fix submodules conflicts and then commit the result.')
+    })
+  })
+
+program
   .command('clone <repo>')
   .action(async repo => {
     try {
