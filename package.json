@@ -15,7 +15,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "skyline-123",
+  "homepage": "https://github.com/skyline-123/git-submodule-management",
   "license": "ISC",
   "dependencies": {
     "commander": "^5.1.0",
