@@ -87,7 +87,7 @@ program
         const subModuleBranches = getSubmoduleBranches(subModuleStatus)
         const { current: currentBranch } = await git.status()
         if (!subModuleBranches.every(item => item === currentBranch)) {
-          console.error('Please make sure that repo branch equels subModuleBranches')
+          console.error('Please make sure that repo branch equals subModuleBranches')
           return
         }
         await git.checkoutBranch(newBranch, currentBranch)
@@ -132,7 +132,7 @@ program
       const subModuleBranches = getSubmoduleBranches(subModuleStatus)
       const { current: currentBranch } = await git.status()
       if (!subModuleBranches.every(item => item === currentBranch)) {
-        console.error('Please make sure that repo branch equels subModuleBranches')
+        console.error('Please make sure that repo branch equals subModuleBranches')
         return
       }
 
