@@ -107,10 +107,13 @@ program
   .command('pull')
   .action(async () => {
     try {
-      await git.pull()
+      const { current: currentBranch } = await git.status()
+      await git.pull('origin', currentBranch)
       await git.raw([
         ...submoduleCommands,
         'pull',
+        'origin',
+        currentBranch
       ])
       console.log('Pull successfully!')
     } catch (error) {
@@ -132,7 +135,6 @@ program
         console.error('Please make sure that repo branch equels subModuleBranches')
         return
       }
-
 
       await git.push('origin', currentBranch)
       await git.raw([
