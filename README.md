@@ -18,6 +18,18 @@ Clone the repo and all submodules at one time.
 gsm clone <repo>
 ```
 
+### Get status
+
+```bash
+gsm status
+```
+
+Only show submodule status
+
+```bash
+gsm status -s
+```
+
 ### Add and commit changes of the default tracked repo and submodules
 
 ```bash

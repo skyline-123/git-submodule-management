@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 const process = require('process')
 const { program } = require('commander')
-const simpleGit = require('simple-git/promise');
-const git = simpleGit()
+const simpleGit = require('simple-git/promise')
+const { exec } = require('child_process')
 const { version } = require('../package.json')
+
+const git = simpleGit()
 
 const submoduleCommands = [
   'submodule',
@@ -20,6 +22,20 @@ const getSubmoduleBranches = status => {
   }
   return branches
 }
+
+program
+  .command('status')
+  .option('-s, --submodule', 'only show submodules git status.')
+  .action(async (options) => {
+    const { submodule } = options
+    const { spawn } = require('child_process');
+    !submodule && spawn('git', ['status', '-s'], {
+      stdio: 'inherit' // fix: color
+    });
+    spawn('git', ['submodule', 'foreach', 'git', 'status', '-s'], {
+      stdio: 'inherit' // fix: color
+    });
+  })
 
 program
   .command('ac <message>')
