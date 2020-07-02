@@ -62,7 +62,7 @@ program
           message
         ])
       } catch (error) {
-        console.log('submodules working tree clean')
+        console.log(error)
       }
       await git.raw([
         'add',
