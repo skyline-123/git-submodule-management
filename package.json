@@ -1,6 +1,6 @@
 {
   "name": "git-submodule-management",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A fast git submodule management cli.",
   "keywords": [
     "git",
