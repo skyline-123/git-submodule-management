@@ -5,12 +5,17 @@ const { program } = require('commander')
 const simpleGit = require('simple-git/promise')
 const { exec, spawn, spawnSync } = require('child_process')
 const pkg = require('../package.json')
-const updateNotifier = require('update-notifier');
+const updateNotifier = require('update-notifier')
+const chalk = require('chalk')
 
+const updateCommand = 'npm i git-submodule-management -g'
 // Checks for available update and returns an instance
 const notifier = updateNotifier({ pkg, updateCheckInterval: 1000 * 60 })
 // Notify using the built-in convenience method
-notifier.notify()
+notifier.notify({message:
+  `Update avaliable ${chalk.blue('{currentVersion}')} -> ${chalk.green('{latestVersion}')}\n` +
+  `Run ${chalk.greenBright(updateCommand)} to update.`
+});
 
 const git = simpleGit()
 const { version } = pkg
