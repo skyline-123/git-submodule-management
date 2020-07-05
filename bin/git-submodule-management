@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 const process = require('process')
+const path = require('path')
 const { program } = require('commander')
 const simpleGit = require('simple-git/promise')
-const { exec } = require('child_process')
+const { exec, spawn, spawnSync } = require('child_process')
 const pkg = require('../package.json')
 const updateNotifier = require('update-notifier');
 
-updateNotifier({pkg}).notify();
+// Checks for available update and returns an instance
+const notifier = updateNotifier({ pkg, updateCheckInterval: 1000 * 60 })
+// Notify using the built-in convenience method
+notifier.notify()
 
 const git = simpleGit()
 const { version } = pkg
@@ -27,12 +31,26 @@ const getSubmoduleBranches = status => {
   return branches
 }
 
+const getModifySubmodulePaths = subModuleStatusArr => {
+  const paths = []
+  subModuleStatusArr.forEach(item => {
+    const PathRegExp = /.+(?=\nOn branch)/g
+    const match = PathRegExp.exec(item)
+    paths.push(match[0].replace(/\s/, '').replace(/\'/g, ''))
+  })
+  return paths
+}
+
 program
   .command('status')
   .option('-s, --submodule', 'only show submodules git status.')
   .action(async (options) => {
+    const subModuleStatus = await git.raw([
+      ...submoduleCommands,
+      'status'
+    ])
+
     const { submodule } = options
-    const { spawn } = require('child_process');
     !submodule && spawn('git', ['status', '-s'], {
       stdio: 'inherit' // fix: color
     });
@@ -44,7 +62,17 @@ program
 program
   .command('ac <message>')
   .action(async (message) => {
+    const clean = 'nothing to commit, working tree clean'
+    const status = await git.raw(['status'])
+    if (status.indexOf(clean) !== -1) {
+      console.log(clean)
+      return
+    }
     try {
+      const subModuleStatus = await git.raw([
+        ...submoduleCommands,
+        'status'
+      ])
       try {
         await git.raw([
           ...submoduleCommands,
@@ -55,12 +83,18 @@ program
         console.log(error)
       }
       try {
-        await git.raw([
-          ...submoduleCommands,
-          'commit',
-          '-m',
-          message
-        ])
+        if (subModuleStatus) {
+          const status = subModuleStatus
+            .split('Entering')
+            .filter(_ => _ !== '')
+            .filter(_ => _.indexOf(clean) === -1)
+          getModifySubmodulePaths(status).forEach(item => {
+            const cwd = path.resolve(process.cwd(), item)
+            spawnSync('git', ['commit', '-m', message], {
+              cwd
+            })
+          })
+        }
       } catch (error) {
         console.log(error)
       }
