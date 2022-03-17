@@ -20,7 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^5.1.0",
-    "simple-git": "^2.5.0",
+    "simple-git": "^3.3.0",
     "update-notifier": "^4.1.0"
   }
 }
